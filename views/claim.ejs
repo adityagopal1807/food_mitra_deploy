@@ -1,0 +1,27 @@
+<%- include('partials/header', { title: 'Confirm Your Claim | FoodMitra', page: 'listings' }) %>
+
+  <section class="form-shell">
+    <div class="form-card">
+      <h2><i class="fas fa-check-circle"></i> Confirm Your Claim</h2>
+      <div class="result-details">
+        <p>Item: <strong><%= name %></strong></p>
+        <p>Original Price: <strong>₹<%= price %></strong></p>
+        <p>Discount: <strong><%= discount %>%</strong></p>
+        <p>Final Price: <strong>₹<%= price - Math.floor((price * discount) / 100) %></strong></p>
+      </div>
+
+      <form action="/confirm" method="POST">
+        <input type="hidden" name="name" value="<%= name %>">
+        <input type="hidden" name="price" value="<%= price %>">
+        <input type="hidden" name="discount" value="<%= discount %>">
+
+        <label for="address">Your Delivery Address</label>
+        <input type="text" id="address" name="address" placeholder="e.g. B-105, Green Residency, Sector 62, Noida" required>
+
+        <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Confirm Claim</button>
+      </form>
+      <a class="back-link" href="/listings">← Back to Listings</a>
+    </div>
+  </section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,102 @@
+<%- include('partials/header', { title: 'Browse Listings | FoodMitra', page: 'listings' }) %>
+
+  <header class="page-hero page-hero-compact">
+    <span class="eyebrow">Available Now</span>
+    <h1>Browse Food Listings</h1>
+    <p>Search surplus food near you by pincode, reserve what you need, and pick it up before it's gone.</p>
+  </header>
+
+  <section class="section-alt listings-search-bar">
+    <div class="container">
+      <form class="pincode-search" action="/listings" method="GET">
+        <div class="pincode-search-field">
+          <i class="fas fa-map-marker-alt"></i>
+          <input
+            type="text"
+            name="pincode"
+            placeholder="Enter your area pincode, e.g. 110001"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            value="<%= pincode || '' %>"
+          >
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+        <% if (pincode) { %>
+          <a href="/listings" class="btn btn-ghost">Clear</a>
+        <% } %>
+      </form>
+      <% if (pincode) { %>
+        <p class="search-result-note">Showing listings for pincode <strong><%= pincode %></strong></p>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section section-tint">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Live Listings</span>
+        <h2><i class="fas fa-box-open"></i> Surplus Food Near You</h2>
+        <p>Posted by our community members — updated in real time.</p>
+      </div>
+
+      <% if (foodItems && foodItems.length > 0) { %>
+        <div class="grid grid-3">
+          <% foodItems.forEach(function(item) { %>
+            <% var soldOut = item.quantity <= 0; %>
+            <div class="listing-card <%= soldOut ? 'listing-card-sold-out' : '' %>">
+              <div class="listing-image">
+                <img src="<%= item.image %>" alt="<%= item.title %>">
+                <span class="badge <%= soldOut ? 'badge-muted' : 'badge-success' %> listing-badge"><%= soldOut ? 'Sold Out' : 'Available' %></span>
+              </div>
+              <div class="listing-body">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                  <h3 class="listing-title"><%= item.title %></h3>
+                  <% if (item.listingType === 'paid') { %>
+                    <span class="listing-type-tag listing-type-paid"><i class="fas fa-tag"></i> ₹<%= item.price %></span>
+                  <% } else { %>
+                    <span class="listing-type-tag listing-type-free"><i class="fas fa-gift"></i> Free</span>
+                  <% } %>
+                </div>
+                <p class="listing-meta"><i class="fas fa-align-left"></i> <%= item.description %></p>
+                <p class="listing-meta"><i class="fas fa-tag"></i> <%= item.category === 'animals' ? 'For Animals' : 'For People' %></p>
+                <p class="listing-meta"><i class="fas fa-map-marker-alt"></i> <%= item.location ? item.location + ' — ' : '' %>Pincode: <%= item.pincode %></p>
+                <p class="listing-meta"><i class="fas fa-clock"></i> Expires: <%= item.expiry %></p>
+                <p class="listing-meta"><i class="fas fa-user"></i> Posted by <%= item.postedByName || 'Community Member' %></p>
+                <div class="quantity-indicator">
+                  <div class="quantity-track">
+                    <div class="quantity-fill" style="width: <%= item.originalQuantity ? Math.max(0, Math.round((item.quantity / item.originalQuantity) * 100)) : 0 %>%;"></div>
+                  </div>
+                  <span class="quantity-label"><%= item.quantity %> of <%= item.originalQuantity %> left</span>
+                </div>
+                <% if (soldOut) { %>
+                  <button class="btn btn-block" disabled>Sold Out</button>
+                <% } else { %>
+                  <a href="/reserve/<%= item._id %>"><button class="btn btn-primary btn-block">Order Now</button></a>
+                <% } %>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <% if (pincode) { %>
+            <p>No listings found for pincode <strong><%= pincode %></strong> right now. <a href="/listings">View all listings</a> or <a href="/account/items/new">list surplus food</a> in this area (login required).</p>
+          <% } else { %>
+            <p>No listings yet. <a href="/account/items/new">Log in and be the first to list surplus food!</a></p>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section section-alt text-center">
+    <div class="container">
+      <h2 style="margin-bottom:16px;">Have Surplus Food to Share?</h2>
+      <p style="max-width:520px; margin:0 auto 28px;">Log in and list your surplus food in minutes — free or paid — and help it reach people and animals who need it most.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a href="/account/items/new" class="btn btn-primary"><i class="fas fa-hand-holding-heart"></i> Donate / List Food</a>
+      </div>
+    </div>
+  </section>
+
+<%- include('partials/footer') %>

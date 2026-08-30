@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      # Persist uploaded food photos across container restarts/redeploys
+      - uploads:/app/public/images
+
+volumes:
+  uploads:
+
+# Using MongoDB Atlas (recommended) — just point MONGODB_URI in your .env
+# to your Atlas connection string and this compose file needs no changes.
+#
+# To self-host MongoDB instead, uncomment the block below, add
+# "depends_on: [mongo]" under the app service, and set
+# MONGODB_URI=mongodb://mongo:27017/foodmitra in your .env.
+#
+#  mongo:
+#    image: mongo:7
+#    restart: unless-stopped
+#    volumes:
+#      - mongo_data:/data/db
+#
+# and add "mongo_data:" under the volumes section above.

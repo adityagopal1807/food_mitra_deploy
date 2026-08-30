@@ -1,0 +1,25 @@
+<%- include('../partials/header', { title: 'Enter Login Code | FoodMitra', page: 'account' }) %>
+
+  <section class="form-shell">
+    <div class="form-card">
+      <h2><i class="fas fa-shield-halved"></i> Enter Your Code</h2>
+      <p class="form-subtitle">We emailed a 6-digit code to <strong><%= email %></strong>. It expires in 5 minutes.</p>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="form-error"><i class="fas fa-triangle-exclamation"></i> <%= error %></div>
+      <% } %>
+
+      <form action="/auth/otp/verify" method="POST">
+        <input type="hidden" name="email" value="<%= email %>">
+
+        <label for="otp">6-Digit Code</label>
+        <input type="text" id="otp" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" autofocus required style="letter-spacing:8px; font-size:1.4rem; text-align:center;">
+
+        <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-check"></i> Verify &amp; Log In</button>
+      </form>
+
+      <p class="form-switch">Didn't get a code? <a href="/auth/login">Try again</a></p>
+    </div>
+  </section>
+
+<%- include('../partials/footer') %>

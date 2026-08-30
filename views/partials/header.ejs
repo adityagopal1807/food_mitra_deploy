@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title : 'FoodMitra — Rescue Food, Feed Lives' %></title>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'FoodMitra connects surplus food with people and animals in need, reducing waste and fighting hunger together.' %>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="nav-logo-icon"><i class="fas fa-utensils"></i></span>
+        FoodMitra
+      </a>
+      <input type="checkbox" id="nav-check" class="nav-check" />
+      <label for="nav-check" class="nav-toggle"><i class="fas fa-bars"></i></label>
+      <ul class="nav-links">
+        <li><a href="/" class="<%= locals.page === 'home' ? 'active' : '' %>">Home</a></li>
+        <li><a href="/about" class="<%= locals.page === 'about' ? 'active' : '' %>">About</a></li>
+        <li><a href="/listings" class="<%= locals.page === 'listings' ? 'active' : '' %>">Browse Listings</a></li>
+        <li><a href="/leaderboard" class="<%= locals.page === 'leaderboard' ? 'active' : '' %>">Leaderboard</a></li>
+        <li><a href="/contact" class="<%= locals.page === 'contact' ? 'active' : '' %>">Contact</a></li>
+        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+          <li><a href="/account/dashboard" class="nav-admin-link <%= locals.page === 'account' ? 'active' : '' %>"><i class="fas fa-user"></i> <%= currentUserName || 'My Account' %></a></li>
+          <li>
+            <form action="/auth/logout" method="POST" style="display:inline;">
+              <button type="submit" class="nav-admin-link" style="background:none; border:none; cursor:pointer; font:inherit;"><i class="fas fa-right-from-bracket"></i> Logout</button>
+            </form>
+          </li>
+        <% } else { %>
+          <li><a href="/auth/login" class="nav-admin-link <%= locals.page === 'account' ? 'active' : '' %>"><i class="fas fa-right-to-bracket"></i> Login</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </nav>

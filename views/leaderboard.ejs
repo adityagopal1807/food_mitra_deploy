@@ -1,0 +1,103 @@
+<%- include('partials/header', { title: 'Leaderboard | FoodMitra', page: 'leaderboard' }) %>
+
+  <header class="page-hero">
+    <span class="eyebrow">Community Impact</span>
+    <h1><i class="fas fa-trophy"></i> Top Contributors</h1>
+    <p>Ranked by live points — earned by signing up, listing food, introducing new pincodes, and getting orders confirmed.</p>
+  </header>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="admin-stats" style="margin-bottom: 46px;">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon admin-stat-icon-success"><i class="fas fa-seedling"></i></div>
+          <div>
+            <span class="admin-stat-value"><%= totalMeals %></span>
+            <span class="admin-stat-label">Total Units Listed</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon"><i class="fas fa-box-open"></i></div>
+          <div>
+            <span class="admin-stat-value"><%= totalListingsCount %></span>
+            <span class="admin-stat-label">Total Listings</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon admin-stat-icon-muted"><i class="fas fa-users"></i></div>
+          <div>
+            <span class="admin-stat-value"><%= totalDonors %></span>
+            <span class="admin-stat-label">Registered Users</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon"><i class="fas fa-map-location-dot"></i></div>
+          <div>
+            <span class="admin-stat-value"><%= totalRegions %></span>
+            <span class="admin-stat-label">Regions Covered</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <span class="eyebrow">By Points</span>
+        <h2>Top Contributors</h2>
+        <p>+5 for joining, +10 per listing, +20 for a brand-new pincode, +15 when an order you listed is confirmed.</p>
+      </div>
+
+      <% if (topUsers && topUsers.length > 0) { %>
+        <div class="table-wrap" style="max-width:820px; margin: 0 auto;">
+          <table>
+            <thead>
+              <tr><th>Rank</th><th>Name</th><th>Joined</th><th>Points</th></tr>
+            </thead>
+            <tbody>
+              <% var medals = ['🥇','🥈','🥉']; %>
+              <% topUsers.forEach(function(u, i) { %>
+                <tr>
+                  <td><%= i + 1 %> <%= medals[i] || '' %></td>
+                  <td><%= u.name %></td>
+                  <td><%= new Date(u.createdAt).toLocaleDateString() %></td>
+                  <td><span class="points-pill"><i class="fas fa-star"></i> <%= u.points %></span></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <p>No contributors yet. <a href="/auth/login">Log in</a> and be the first to list surplus food!</p>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section section-tint">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">By Region</span>
+        <h2><i class="fas fa-map-marker-alt"></i> Regional Leaderboard by Pincode</h2>
+        <p>See which areas have the most listing activity — updated live as new listings and pincodes come in.</p>
+      </div>
+
+      <% if (regionLeaderboard && regionLeaderboard.length > 0) { %>
+        <div style="max-width:700px; margin:0 auto;">
+          <% regionLeaderboard.forEach(function(region, i) { %>
+            <% var pct = maxRegionQuantity > 0 ? Math.max(6, Math.round((region.totalQuantity / maxRegionQuantity) * 100)) : 0; %>
+            <div class="progress-row">
+              <div class="label-row">
+                <span><%= i + 1 %>. Pincode <%= region._id %> <span style="color:var(--text-light); font-weight:500;">(<%= region.contributorCount %> contributor<%= region.contributorCount === 1 ? '' : 's' %>, <%= region.totalListings %> listing<%= region.totalListings === 1 ? '' : 's' %>)</span></span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width:<%= pct %>%; background:var(--primary);"><%= region.totalQuantity %></div></div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <p>No regional data yet — listings will appear here grouped by pincode as they come in.</p>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+<%- include('partials/footer') %>

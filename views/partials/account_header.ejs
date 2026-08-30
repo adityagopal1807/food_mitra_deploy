@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title : 'My Account | FoodMitra' %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+
+  <div class="admin-shell">
+    <input type="checkbox" id="admin-nav-check" class="admin-nav-check">
+    <label for="admin-nav-check" class="admin-nav-toggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></label>
+
+    <aside class="admin-sidebar">
+      <a href="/" class="admin-logo">
+        <span class="nav-logo-icon"><i class="fas fa-utensils"></i></span>
+        FoodMitra
+      </a>
+      <span class="admin-sidebar-tag">My Account</span>
+
+      <nav class="admin-nav">
+        <a href="/account/dashboard" class="<%= locals.page === 'dashboard' ? 'active' : '' %>"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="/account/items/new" class="<%= locals.page === 'new-item' || locals.page === 'edit-item' ? 'active' : '' %>"><i class="fas fa-circle-plus"></i> Add Food Item</a>
+        <a href="/listings" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> View Public Site</a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <div class="admin-avatar"><%= (currentUserName || 'U').charAt(0).toUpperCase() %></div>
+        <div class="admin-sidebar-user">
+          <strong><%= currentUserName || 'My Account' %></strong>
+          <form action="/auth/logout" method="POST">
+            <button type="submit" class="admin-logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</button>
+          </form>
+        </div>
+      </div>
+    </aside>
+
+    <main class="admin-main">

@@ -1,0 +1,24 @@
+<%- include('partials/header', { title: 'Thank You | FoodMitra', page: '' }) %>
+
+  <section class="result-shell">
+    <div class="result-card">
+      <div class="result-icon"><i class="fas fa-heart"></i></div>
+      <h1>Thank You!</h1>
+      <% if (typeof claim !== 'undefined' && claim) { %>
+        <p>Your claim for <strong><%= claim.name %></strong> has been confirmed. 🙏</p>
+        <div class="result-details">
+          <p><strong>Final Price:</strong> ₹<%= claim.finalPrice %></p>
+          <p><strong>Delivery Address:</strong> <%= claim.address %></p>
+        </div>
+      <% } else { %>
+        <p>Your donation has been recorded successfully. 🙏</p>
+      <% } %>
+
+      <div class="result-links">
+        <a href="/" class="btn btn-dark"><i class="fas fa-home"></i> Go to Home</a>
+        <a href="/listings" class="btn btn-primary"><i class="fas fa-search"></i> Browse Listings</a>
+      </div>
+    </div>
+  </section>
+
+<%- include('partials/footer') %>

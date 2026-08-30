@@ -1,0 +1,103 @@
+<%- include('../partials/account_header', { title: (item ? 'Edit' : 'Add') + ' Food Item | FoodMitra', page: item ? 'edit-item' : 'new-item' }) %>
+
+  <div class="admin-topbar">
+    <div>
+      <h1><%= item ? 'Edit Food Item' : 'Add Food Item' %></h1>
+      <p><%= item ? 'Update the details of this listing.' : 'List surplus food for a specific pincode.' %></p>
+    </div>
+    <a href="/account/dashboard" class="btn btn-ghost"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+  </div>
+
+  <div class="admin-panel admin-form-panel">
+    <% if (error) { %>
+      <div class="form-error"><i class="fas fa-triangle-exclamation"></i> <%= error %></div>
+    <% } %>
+
+    <form method="POST" action="<%= item ? '/account/items/' + item._id + '/edit' : '/account/items' %>" enctype="multipart/form-data" id="item-form">
+      <div class="admin-form-grid">
+        <div>
+          <label for="title">Food Title</label>
+          <input type="text" id="title" name="title" placeholder="e.g. 20 Packed Veg Meals" value="<%= item ? item.title : (formData && formData.title) || '' %>" required>
+
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="3" placeholder="Details about the food, packaging, dietary info..." required><%= item ? item.description : (formData && formData.description) || '' %></textarea>
+
+          <label for="expiry">Best Before</label>
+          <input type="date" id="expiry" name="expiry" value="<%= item ? item.expiry : (formData && formData.expiry) || '' %>" required>
+
+          <label>Listing Type</label>
+          <div style="display:flex; gap:24px; margin-top:6px;">
+            <label style="display:flex; align-items:center; gap:6px; margin:0; font-weight:500;">
+              <input type="radio" name="listingType" value="free" id="type-free" style="width:auto;"
+                <%= (!item && (!formData || formData.listingType !== 'paid')) || (item && item.listingType === 'free') ? 'checked' : '' %>>
+              Free
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; margin:0; font-weight:500;">
+              <input type="radio" name="listingType" value="paid" id="type-paid" style="width:auto;"
+                <%= (formData && formData.listingType === 'paid') || (item && item.listingType === 'paid') ? 'checked' : '' %>>
+              Paid
+            </label>
+          </div>
+
+          <div id="price-field" style="display:none;">
+            <label for="price">Price per unit (₹)</label>
+            <input type="number" id="price" name="price" min="1" step="0.01" placeholder="e.g. 50" value="<%= item ? item.price : (formData && formData.price) || '' %>">
+          </div>
+        </div>
+
+        <div>
+          <label for="pincode">Pincode</label>
+          <input type="text" id="pincode" name="pincode" pattern="[0-9]{6}" maxlength="6" placeholder="e.g. 110001" value="<%= item ? item.pincode : (formData && formData.pincode) || '' %>" required>
+
+          <label for="location">Location / Area</label>
+          <input type="text" id="location" name="location" placeholder="e.g. Connaught Place, Delhi" value="<%= item ? item.location : (formData && formData.location) || '' %>" required>
+
+          <label for="address">Pickup Address</label>
+          <textarea id="address" name="address" rows="3" placeholder="Full pickup address..." required><%= item ? item.address : (formData && formData.address) || '' %></textarea>
+
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" value="<%= item ? item.phone : (formData && formData.phone) || '' %>" required>
+
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="">-- Select Category --</option>
+            <option value="human" <%= (item ? item.category === 'human' : (formData && formData.category === 'human')) ? 'selected' : '' %>>For People</option>
+            <option value="animals" <%= (item ? item.category === 'animals' : (formData && formData.category === 'animals')) ? 'selected' : '' %>>For Animals</option>
+          </select>
+
+          <label for="quantity"><%= item ? 'Quantity Remaining' : 'Quantity Available' %></label>
+          <input type="number" id="quantity" name="quantity" min="<%= item ? 0 : 1 %>" placeholder="e.g. 10" value="<%= item ? item.quantity : (formData && formData.quantity) || '' %>" required>
+
+          <label for="image">Photo <%= item ? '(leave blank to keep current photo)' : '' %></label>
+          <input type="file" id="image" name="image" accept="image/*" <%= item ? '' : 'required' %>>
+          <% if (item) { %>
+            <img src="<%= item.image %>" alt="<%= item.title %>" class="admin-current-image">
+          <% } %>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-check"></i> <%= item ? 'Save Changes' : 'Add Listing' %></button>
+    </form>
+  </div>
+
+  <script>
+    (function () {
+      var freeRadio = document.getElementById('type-free');
+      var paidRadio = document.getElementById('type-paid');
+      var priceField = document.getElementById('price-field');
+      var priceInput = document.getElementById('price');
+
+      function syncPriceField() {
+        var isPaid = paidRadio.checked;
+        priceField.style.display = isPaid ? 'block' : 'none';
+        priceInput.required = isPaid;
+        if (!isPaid) priceInput.value = '';
+      }
+
+      freeRadio.addEventListener('change', syncPriceField);
+      paidRadio.addEventListener('change', syncPriceField);
+      syncPriceField();
+    })();
+  </script>
+
+<%- include('../partials/account_footer') %>

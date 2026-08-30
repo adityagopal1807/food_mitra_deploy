@@ -1,0 +1,70 @@
+<%- include('partials/header', { title: 'Order Food | FoodMitra', page: 'listings' }) %>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <section class="result-shell">
+      <div class="result-card">
+        <div class="result-icon"><i class="fas fa-clock"></i></div>
+        <h2>Order Placed, <%= name %>!</h2>
+        <img src="<%= item.image %>" alt="<%= item.title %>" style="border-radius:12px; margin:16px 0; max-height:280px; object-fit:contain; width:100%; background:var(--bg);">
+        <div class="form-success" style="text-align:left;"><i class="fas fa-circle-info"></i> Your order is <strong>pending</strong> — the person who listed this item needs to confirm it before it's final. You'll see the status update on your Dashboard.</div>
+        <div class="result-details">
+          <p><strong>Item:</strong> <%= item.title %></p>
+          <p><strong>Quantity Requested:</strong> <%= reservedQty %></p>
+          <% if (item.listingType === 'paid') { %>
+            <p><strong>Total (if confirmed):</strong> ₹<%= item.price * reservedQty %></p>
+          <% } %>
+          <p><strong>Pick up before:</strong> <%= item.expiry %></p>
+        </div>
+        <p>Thank you for reducing food waste 🙌</p>
+        <div class="result-links">
+          <a class="btn btn-primary" href="/account/dashboard">View My Orders</a>
+          <a class="btn btn-ghost" href="/listings">← Back to Listings</a>
+        </div>
+      </div>
+    </section>
+  <% } else { %>
+    <section class="form-shell">
+      <div class="form-card">
+        <h2><i class="fas fa-hand-holding-heart"></i> Order This Food</h2>
+        <p class="form-subtitle">Fill in your details to request this listing. The lister will confirm or reject your order.</p>
+
+        <div class="result-details" style="margin-bottom: 10px;">
+          <p><strong><%= item.title %></strong>
+            <% if (item.listingType === 'paid') { %>
+              <span class="listing-type-tag listing-type-paid"><i class="fas fa-tag"></i> ₹<%= item.price %> / unit</span>
+            <% } else { %>
+              <span class="listing-type-tag listing-type-free"><i class="fas fa-gift"></i> Free</span>
+            <% } %>
+          </p>
+          <p><%= item.description %></p>
+          <p><%= item.category === 'animals' ? 'For Animals' : 'For People' %> &nbsp;|&nbsp; <%= item.location ? item.location + ' — ' : '' %>Pincode: <%= item.pincode %> &nbsp;|&nbsp; Expires: <%= item.expiry %></p>
+          <p>Pickup address: <%= item.address %></p>
+          <p>Contact: <%= item.phone %></p>
+          <p><strong><%= item.quantity %></strong> of <%= item.originalQuantity %> still available</p>
+        </div>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="form-error"><i class="fas fa-triangle-exclamation"></i> <%= error %></div>
+        <% } %>
+
+        <form method="POST" action="/reserve/<%= item._id %>">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="e.g. Priya Sharma" required>
+
+          <label for="contact">Contact Number</label>
+          <input type="tel" id="contact" name="contact" pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
+
+          <label for="address">Pickup / Delivery Address</label>
+          <textarea id="address" name="address" rows="2" placeholder="Where should this be picked up or delivered from?" required></textarea>
+
+          <label for="quantity">Quantity to Order</label>
+          <input type="number" id="quantity" name="quantity" min="1" max="<%= item.quantity %>" value="1" required>
+
+          <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Place Order</button>
+        </form>
+        <a class="back-link" href="/listings">← Back to Listings</a>
+      </div>
+    </section>
+  <% } %>
+
+<%- include('partials/footer') %>

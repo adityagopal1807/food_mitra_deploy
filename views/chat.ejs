@@ -1,0 +1,60 @@
+<%- include('partials/header', { title: 'AI Chat Assistant | FoodMitra', page: '' }) %>
+
+  <section class="result-shell">
+    <div class="result-card" style="max-width:420px; padding:0; overflow:hidden;">
+      <div class="chat-window-header" style="border-radius:0;">
+        <span><i class="fas fa-robot"></i> Food Donation Assistant</span>
+      </div>
+      <div class="chat-window-body" id="chat-box" style="height:380px;"></div>
+      <div class="chat-window-input">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button id="chat-send" aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Standalone page: wire the inline chat directly (no floating widget here).
+    document.addEventListener('DOMContentLoaded', function () {
+      const chatBox = document.getElementById('chat-box');
+      const input = document.getElementById('user-input');
+      const sendBtn = document.getElementById('chat-send');
+
+      function appendMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = 'chat-message ' + (sender === 'user' ? 'user' : 'bot');
+        div.textContent = text;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      async function sendMessage() {
+        const message = input.value.trim();
+        if (!message) return;
+        appendMessage(message, 'user');
+        input.value = '';
+        try {
+          const res = await fetch('/get', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+          });
+          const data = await res.json();
+          appendMessage(data.reply, 'bot');
+        } catch (err) {
+          appendMessage('⚠️ Error contacting bot.', 'bot');
+        }
+      }
+
+      sendBtn.addEventListener('click', sendMessage);
+      input.addEventListener('keypress', function (e) { if (e.key === 'Enter') sendMessage(); });
+      appendMessage("Hi! I'm the FoodMitra assistant 🤖 Ask about listings, orders, login, pincodes, or your points.", 'bot');
+    });
+  </script>
+
+  <style>
+    /* This page IS the chat assistant — hide the floating widget to avoid duplication */
+    #chat-fab, #chat-window { display: none !important; }
+  </style>
+
+<%- include('partials/footer') %>

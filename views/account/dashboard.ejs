@@ -1,0 +1,221 @@
+<%- include('../partials/account_header', { title: 'My Dashboard | FoodMitra', page: 'dashboard' }) %>
+
+  <div class="admin-topbar">
+    <div>
+      <h1>My Dashboard</h1>
+      <p>Manage your listings, respond to orders, and track your leaderboard points.</p>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <span class="points-pill"><i class="fas fa-star"></i> <%= user ? user.points : 0 %> points</span>
+      <a href="/account/items/new" class="btn btn-primary"><i class="fas fa-circle-plus"></i> Add Food Item</a>
+    </div>
+  </div>
+
+  <% if (typeof notice !== 'undefined' && notice) {
+       var noticeText = {
+         listing_added: '✅ Listing added successfully.',
+         order_confirmed: '✅ Order confirmed — stock updated and points awarded.',
+         order_rejected: 'Order rejected.',
+         order_not_found: 'That order could not be found or was already handled.',
+         insufficient_stock: '⚠️ Not enough stock left to confirm that order, so it was automatically rejected.'
+       }[notice];
+  %>
+    <% if (noticeText) { %>
+      <div class="form-success" style="max-width:1100px; margin:0 auto 20px;"><i class="fas fa-circle-info"></i> <%= noticeText %></div>
+    <% } %>
+  <% } %>
+
+  <div class="admin-stats">
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-boxes-stacked"></i></div>
+      <div>
+        <span class="admin-stat-value"><%= totalListings %></span>
+        <span class="admin-stat-label">Total Listings</span>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon admin-stat-icon-success"><i class="fas fa-cubes"></i></div>
+      <div>
+        <span class="admin-stat-value"><%= totalQuantityAvailable %></span>
+        <span class="admin-stat-label">Units Available</span>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon admin-stat-icon-muted"><i class="fas fa-ban"></i></div>
+      <div>
+        <span class="admin-stat-value"><%= soldOutCount %></span>
+        <span class="admin-stat-label">Sold Out Listings</span>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-clock"></i></div>
+      <div>
+        <span class="admin-stat-value"><%= ordersReceived.filter(function(o){ return o.status === 'pending'; }).length %></span>
+        <span class="admin-stat-label">Pending Orders</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-panel-head">
+      <h2>Your Listings</h2>
+    </div>
+
+    <% if (items && items.length > 0) { %>
+      <div class="table-wrap admin-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Type</th>
+              <th>Pincode</th>
+              <th>Quantity</th>
+              <th>Expiry</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% items.forEach(function(item) { %>
+              <tr>
+                <td class="admin-table-item">
+                  <img src="<%= item.image %>" alt="<%= item.title %>">
+                  <span><%= item.title %></span>
+                </td>
+                <td>
+                  <% if (item.listingType === 'paid') { %>
+                    <span class="listing-type-tag listing-type-paid"><i class="fas fa-tag"></i> ₹<%= item.price %></span>
+                  <% } else { %>
+                    <span class="listing-type-tag listing-type-free"><i class="fas fa-gift"></i> Free</span>
+                  <% } %>
+                </td>
+                <td><%= item.pincode %></td>
+                <td><%= item.quantity %> / <%= item.originalQuantity %></td>
+                <td><%= item.expiry %></td>
+                <td>
+                  <span class="badge <%= item.quantity > 0 ? 'badge-success' : 'badge-muted' %>"><%= item.quantity > 0 ? 'Available' : 'Sold Out' %></span>
+                </td>
+                <td class="admin-table-actions">
+                  <a href="/account/items/<%= item._id %>/edit" class="admin-icon-btn" title="Edit"><i class="fas fa-pen"></i></a>
+                  <form action="/account/items/<%= item._id %>/delete" method="POST" onsubmit="return confirm('Delete this listing? This cannot be undone.');">
+                    <button type="submit" class="admin-icon-btn admin-icon-btn-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>You haven't added any listings yet. <a href="/account/items/new">Add your first food item</a>.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-panel-head">
+      <h2>Orders Received <span style="font-weight:400; color:var(--text-light); font-size:0.85rem;">(on your listings)</span></h2>
+    </div>
+    <% if (ordersReceived && ordersReceived.length > 0) { %>
+      <div class="table-wrap admin-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Ordered By</th>
+              <th>Contact</th>
+              <th>Qty</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>When</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ordersReceived.forEach(function(o) { %>
+              <tr>
+                <td><%= o.itemTitle %></td>
+                <td><%= o.buyerName %></td>
+                <td><%= o.buyerContact %></td>
+                <td><%= o.quantity %></td>
+                <td><%= o.listingType === 'paid' ? '₹' + (o.price * o.quantity) : 'Free' %></td>
+                <td>
+                  <% if (o.status === 'pending') { %>
+                    <span class="badge badge-warning">Pending</span>
+                  <% } else if (o.status === 'confirmed') { %>
+                    <span class="badge badge-success">Confirmed</span>
+                  <% } else { %>
+                    <span class="badge badge-danger">Rejected</span>
+                  <% } %>
+                </td>
+                <td><%= new Date(o.createdAt).toLocaleString() %></td>
+                <td class="admin-table-actions">
+                  <% if (o.status === 'pending') { %>
+                    <form action="/account/orders/<%= o._id %>/confirm" method="POST" style="display:inline;">
+                      <button type="submit" class="admin-icon-btn" title="Confirm" style="color:var(--success);"><i class="fas fa-check"></i></button>
+                    </form>
+                    <form action="/account/orders/<%= o._id %>/reject" method="POST" style="display:inline;" onsubmit="return confirm('Reject this order?');">
+                      <button type="submit" class="admin-icon-btn admin-icon-btn-danger" title="Reject"><i class="fas fa-xmark"></i></button>
+                    </form>
+                  <% } else { %>
+                    <span style="color:var(--text-light); font-size:0.85rem;">—</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>No orders yet on your listings.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="admin-panel">
+    <div class="admin-panel-head">
+      <h2>My Orders <span style="font-weight:400; color:var(--text-light); font-size:0.85rem;">(placed by you)</span></h2>
+    </div>
+    <% if (ordersPlaced && ordersPlaced.length > 0) { %>
+      <div class="table-wrap admin-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>When</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ordersPlaced.forEach(function(o) { %>
+              <tr>
+                <td><%= o.itemTitle %></td>
+                <td><%= o.quantity %></td>
+                <td><%= o.listingType === 'paid' ? '₹' + (o.price * o.quantity) : 'Free' %></td>
+                <td>
+                  <% if (o.status === 'pending') { %>
+                    <span class="badge badge-warning">Waiting for owner</span>
+                  <% } else if (o.status === 'confirmed') { %>
+                    <span class="badge badge-success">Confirmed</span>
+                  <% } else { %>
+                    <span class="badge badge-danger">Rejected</span>
+                  <% } %>
+                </td>
+                <td><%= new Date(o.createdAt).toLocaleString() %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>You haven't placed any orders yet. <a href="/listings">Browse listings</a>.</p>
+      </div>
+    <% } %>
+  </div>
+
+<%- include('../partials/account_footer') %>

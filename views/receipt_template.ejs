@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Donation Receipt</title>
+    <style>
+        @page { size: A4; margin: 2cm; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Helvetica', Arial, sans-serif; color: #26272B; background: #fff; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header .icon { font-size: 32px; margin-bottom: 6px; }
+        .header h1 { color: #E11D2E; margin: 0; font-size: 24px; }
+        .header p { color: #6B7280; margin-top: 6px; }
+        .content { border-top: 3px solid #E11D2E; padding-top: 24px; }
+        .section { margin-bottom: 16px; font-size: 16px; display: flex; justify-content: space-between; border-bottom: 1px dashed #E7E7EE; padding-bottom: 10px; }
+        .label { font-weight: bold; color: #A8121F; }
+        .footer-note { margin-top: 40px; text-align: center; color: #6B7280; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="icon">🍽️</div>
+        <h1>FoodMitra Donation Receipt</h1>
+        <p>Thank you for making an impact!</p>
+    </div>
+    <div class="content">
+        <div class="section"><span class="label">Donor Name</span><span><%= name %></span></div>
+        <div class="section"><span class="label">Amount Paid</span><span>₹<%= final_price %></span></div>
+        <div class="section"><span class="label">Delivery Address</span><span><%= address %></span></div>
+        <div class="section"><span class="label">Date</span><span><%= new Date(now).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) %></span></div>
+    </div>
+    <p class="footer-note">FoodMitra &middot; nayantaeyewears@gmail.com &middot; Rescuing food, feeding lives</p>
+</body>
+</html>

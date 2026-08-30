@@ -1,0 +1,54 @@
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="footer-logo"><i class="fas fa-utensils"></i> FoodMitra</div>
+        <p>Rescuing surplus food to feed people and animals — building a sustainable, hunger-free community, one meal at a time.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <a href="/about">About Us</a>
+        <a href="/listings">Browse Listings</a>
+      </div>
+      <div class="footer-links">
+        <h4>Resources</h4>
+        <a href="/leaderboard">Leaderboard</a>
+        <a href="/account/items/new">Add Food Item</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="footer-contact">
+        <h4>Get In Touch</h4>
+        <p><i class="fas fa-map-marker-alt"></i> Greater Noida, Uttar Pradesh</p>
+        <p><i class="fas fa-envelope"></i> nayantaeyewears@gmail.com</p>
+        <p><i class="fas fa-phone-alt"></i> +91 9955428948</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <%= new Date().getFullYear() %> <span>FoodMitra</span>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Floating chat widget -->
+  <div class="chat-fab" id="chat-fab" aria-label="Open chat assistant"><i class="fas fa-comments"></i></div>
+  <div class="chat-window" id="chat-window">
+    <div class="chat-window-header">
+      <span><i class="fas fa-robot"></i> Food Assistant</span>
+      <button id="chat-close" aria-label="Close chat"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-window-body" id="chat-box"></div>
+    <div class="chat-window-input">
+      <input type="text" id="user-input" placeholder="Ask about listings, orders, login..." />
+      <button id="chat-send" aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <a href="#" class="scroll-top" id="scroll-top" aria-label="Scroll to top"><i class="fas fa-arrow-up"></i></a>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
